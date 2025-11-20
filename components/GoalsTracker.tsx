@@ -1,7 +1,9 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Goal } from '../types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './Card';
-import { TargetIcon } from './icons/IconComponents';
+import { TargetIcon, ZapIcon } from './icons/IconComponents';
+import { AiGoalGeneratorModal } from './AiGoalGeneratorModal';
 
 const pillarStyles = {
     Health: {
@@ -79,19 +81,48 @@ const GoalItem: React.FC<{ goal: Goal }> = ({ goal }) => {
     );
 };
 
+interface GoalsTrackerProps {
+    goals: Goal[];
+    onAddGoals?: (newGoals: Goal[]) => void;
+}
 
-export const GoalsTracker: React.FC<{ goals: Goal[] }> = ({ goals }) => {
+export const GoalsTracker: React.FC<GoalsTrackerProps> = ({ goals, onAddGoals }) => {
+    const [showAiModal, setShowAiModal] = useState(false);
+
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2"><TargetIcon className="w-5 h-5 text-violet-400" /> Goals & Milestones</CardTitle>
-                <CardDescription>Your long-term objectives and their current progress.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <div className="space-y-4">
-                    {goals.map(goal => <GoalItem key={goal.id} goal={goal} />)}
-                </div>
-            </CardContent>
-        </Card>
+        <>
+            <Card>
+                <CardHeader className="flex flex-row justify-between items-center">
+                    <div>
+                        <CardTitle className="flex items-center gap-2"><TargetIcon className="w-5 h-5 text-violet-400" /> Goals & Milestones</CardTitle>
+                        <CardDescription>Your long-term objectives and their current progress.</CardDescription>
+                    </div>
+                    {onAddGoals && (
+                        <button 
+                            onClick={() => setShowAiModal(true)}
+                            className="flex items-center gap-2 px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-violet-300 hover:text-white text-xs font-bold uppercase tracking-wide rounded-lg transition-all"
+                        >
+                            <ZapIcon className="w-3 h-3" /> AI Coach
+                        </button>
+                    )}
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-4">
+                        {goals.map(goal => <GoalItem key={goal.id} goal={goal} />)}
+                        {goals.length === 0 && (
+                            <div className="text-center py-8 text-slate-500">
+                                No active goals. Use the AI Coach to create some!
+                            </div>
+                        )}
+                    </div>
+                </CardContent>
+            </Card>
+            {showAiModal && onAddGoals && (
+                <AiGoalGeneratorModal 
+                    onClose={() => setShowAiModal(false)} 
+                    onAddGoals={onAddGoals} 
+                />
+            )}
+        </>
     );
 };

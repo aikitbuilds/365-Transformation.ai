@@ -11,6 +11,25 @@ interface ProfileContextType {
     saveProfile: (profile: UserProfile) => Promise<void>;
 }
 
+const DEFAULT_DEMO_PROFILE: UserProfile = {
+    name: 'Demo User',
+    mainGoal: 'Explore the Transformation OS capabilities and organize my life pillars.',
+    pillars: [
+        { name: 'Health', score: 7, target: 10, color: '#10b981' },
+        { name: 'Wealth', score: 5, target: 10, color: '#f59e0b' },
+        { name: 'Relationships', score: 6, target: 10, color: '#3b82f6' },
+    ],
+    aiStartingPlan: {
+        title: 'Demo Onboarding Plan',
+        steps: [
+            'Review your Dashboard metrics.',
+            'Explore the Project management tools.',
+            'Test the AI capabilities in the Goals section.',
+            'Customize your profile settings.'
+        ]
+    }
+};
+
 export const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
 export const ProfileProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -28,8 +47,8 @@ export const ProfileProvider: React.FC<{ children: ReactNode }> = ({ children })
                 if (authContext.isDemo) {
                     // Check if we have a temporary profile in memory or just start fresh
                     if (!profile) {
-                        setProfile(null);
-                        setOnboardingComplete(false);
+                        setProfile(DEFAULT_DEMO_PROFILE);
+                        setOnboardingComplete(true);
                     }
                     setIsLoading(false);
                     return;

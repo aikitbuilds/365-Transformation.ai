@@ -1,3 +1,4 @@
+
 import React, { useContext, useState, useEffect } from 'react';
 import { ProfileContext } from '../context/ProfileContext';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
@@ -18,7 +19,7 @@ const mockStreaks: Streak[] = [
     { name: 'Journaling', icon: ZapIcon, days: 0 },
 ];
 
-const mockGoals: Goal[] = [
+const initialMockGoals: Goal[] = [
     {
         id: 'g1',
         title: 'Launch Solar Installation Business',
@@ -60,6 +61,7 @@ const DashboardPage: React.FC = () => {
     const profileCtx = useContext(ProfileContext);
     const [coachingInsight, setCoachingInsight] = useState<any>(null);
     const [isLoadingInsight, setIsLoadingInsight] = useState(true);
+    const [goals, setGoals] = useState<Goal[]>(initialMockGoals);
 
     useEffect(() => {
         const fetchInsight = async () => {
@@ -79,6 +81,10 @@ const DashboardPage: React.FC = () => {
     }
 
     const { name, mainGoal, pillars } = profileCtx.profile;
+
+    const handleAddGoals = (newGoals: Goal[]) => {
+        setGoals(prev => [...prev, ...newGoals]);
+    };
 
     return (
         <div className="p-4 md:p-8 space-y-6">
@@ -121,7 +127,7 @@ const DashboardPage: React.FC = () => {
             
             <PillarTabs />
 
-            <GoalsTracker goals={mockGoals} />
+            <GoalsTracker goals={goals} onAddGoals={handleAddGoals} />
         </div>
     );
 };
