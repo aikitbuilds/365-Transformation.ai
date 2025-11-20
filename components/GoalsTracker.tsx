@@ -1,9 +1,10 @@
 
 import React, { useState } from 'react';
-import { Goal } from '../types';
+import { Goal, MetricEntry } from '../types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './Card';
-import { TargetIcon, ZapIcon } from './icons/IconComponents';
+import { TargetIcon, ZapIcon, TrendingUpIcon } from './icons/IconComponents';
 import { AiGoalGeneratorModal } from './AiGoalGeneratorModal';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 const pillarStyles = {
     Health: {
@@ -43,9 +44,66 @@ const ProgressBar: React.FC<{ progress: number; target: number; color: string }>
     );
 };
 
+interface MetricChartProps {
+    data: MetricEntry[];
+    color: string;
+    unit: string;
+}
+
+const MetricChart: React.FC<MetricChartProps> = ({ data, color, unit }) => {
+    if (!data || data.length === 0) return null;
+
+    return (
+        <div className="h-32 w-full mt-2 bg-slate-800/50 rounded-md p-2 border border-slate-700/50">
+            <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={data} margin={{ top: 5, right: 0, left: 0, bottom: 0 }}>
+                    <defs>
+                        <linearGradient id={`gradient-${color}`} x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor={color} stopOpacity={0.4}/>
+                            <stop offset="95%" stopColor={color} stopOpacity={0}/>
+                        </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+                    <XAxis 
+                        dataKey="date" 
+                        stroke="#64748b" 
+                        fontSize={10} 
+                        tickLine={false} 
+                        axisLine={false} 
+                        tickFormatter={(val) => new Date(val).toLocaleDateString('en-US', {month: 'short', day: 'numeric'})}
+                    />
+                    <YAxis 
+                        stroke="#64748b" 
+                        fontSize={10} 
+                        tickLine={false} 
+                        axisLine={false} 
+                        width={30}
+                    />
+                    <Tooltip 
+                        contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#f8fafc', fontSize: '12px' }}
+                        itemStyle={{ color: color }}
+                        formatter={(value: number) => [`${value} ${unit}`, 'Progress']}
+                        labelFormatter={(label) => new Date(label).toLocaleDateString()}
+                    />
+                    <Area 
+                        type="monotone" 
+                        dataKey="value" 
+                        stroke={color} 
+                        fill={`url(#gradient-${color})`} 
+                        strokeWidth={2}
+                    />
+                </AreaChart>
+            </ResponsiveContainer>
+        </div>
+    );
+};
+
 const GoalItem: React.FC<{ goal: Goal }> = ({ goal }) => {
+    const [showTrends, setShowTrends] = useState(false);
     const daysRemaining = Math.ceil((new Date(goal.targetDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
     const pillarStyle = pillarStyles[goal.pillar];
+    
+    const hasHistory = goal.keyMetrics.some(m => m.history && m.history.length > 0);
     
     return (
         <div className={`p-4 rounded-lg border-l-4 ${pillarStyle.bgColor}`} style={{ borderColor: pillarStyle.borderColor }}>
@@ -59,7 +117,7 @@ const GoalItem: React.FC<{ goal: Goal }> = ({ goal }) => {
                 </div>
             </div>
             
-            <div className="mt-4 space-y-3">
+            <div className="mt-4 space-y-4">
                 {goal.keyMetrics.map(metric => (
                     <div key={metric.name}>
                         <div className="flex justify-between items-baseline text-xs mb-1">
@@ -69,13 +127,33 @@ const GoalItem: React.FC<{ goal: Goal }> = ({ goal }) => {
                             </span>
                         </div>
                         <ProgressBar progress={metric.progress} target={metric.target} color={pillarStyle.borderColor} />
+                        
+                        {showTrends && metric.history && metric.history.length > 0 && (
+                            <MetricChart 
+                                data={metric.history} 
+                                color={pillarStyle.borderColor} 
+                                unit={metric.unit}
+                            />
+                        )}
                     </div>
                 ))}
             </div>
 
-            <div className="mt-4 text-right text-xs text-slate-500 font-medium">
-                Target: {new Date(goal.targetDate).toLocaleDateString()}
-                {daysRemaining >= 0 && goal.status !== 'Achieved' && ` (${daysRemaining} days left)`}
+            <div className="mt-4 flex justify-between items-center">
+                 <div className="text-xs text-slate-500 font-medium">
+                    Target: {new Date(goal.targetDate).toLocaleDateString()}
+                    {daysRemaining >= 0 && goal.status !== 'Achieved' && ` (${daysRemaining} days left)`}
+                </div>
+                
+                {hasHistory && (
+                    <button 
+                        onClick={() => setShowTrends(!showTrends)}
+                        className="flex items-center gap-1 text-xs text-violet-400 hover:text-violet-300 transition-colors font-medium"
+                    >
+                        <TrendingUpIcon className="w-3 h-3" />
+                        {showTrends ? 'Hide Trends' : 'View Trends'}
+                    </button>
+                )}
             </div>
         </div>
     );
@@ -120,7 +198,8 @@ export const GoalsTracker: React.FC<GoalsTrackerProps> = ({ goals, onAddGoals })
             {showAiModal && onAddGoals && (
                 <AiGoalGeneratorModal 
                     onClose={() => setShowAiModal(false)} 
-                    onAddGoals={onAddGoals} 
+                    onAddGoals={onAddGoals}
+                    currentGoals={goals}
                 />
             )}
         </>

@@ -50,19 +50,29 @@ export const getCoachingInsight = async (recentEntries: string): Promise<any> =>
     }
 };
 
-export const generateSmartGoals = async (profile: UserProfile): Promise<Goal[]> => {
+export const generateSmartGoals = async (profile: UserProfile, currentGoals: Goal[] = []): Promise<Goal[]> => {
+    const currentGoalsSummary = currentGoals.length > 0 
+        ? currentGoals.map(g => `- ${g.title} (Status: ${g.status}) [Pillar: ${g.pillar}]`).join('\n')
+        : "No active goals yet.";
+
     const prompt = `
-        Act as a high-performance life coach. Based on the user's profile, generate 3 distinct SMART goals.
+        Act as a high-performance life coach. Based on the user's profile and their CURRENT progress, generate 3 NEW distinct SMART goals.
         
         User Name: ${profile.name}
         Main Life Goal: "${profile.mainGoal}"
-        Current Pillars Status:
-        ${profile.pillars.map(p => `- ${p.name}: Score ${p.score}/${p.target}`).join('\n')}
+        
+        Current Pillars Status (Score/Target):
+        ${profile.pillars.map(p => `- ${p.name}: ${p.score}/${p.target}`).join('\n')}
 
-        Generate goals that are Specific, Measurable, Achievable, Relevant, and Time-bound.
-        Ensure the target dates are realistic (YYYY-MM-DD format).
-        Assign each goal to one of these pillars: 'Health', 'Wealth', 'Relationships', 'General'.
-        Status should always be 'Upcoming'.
+        Existing Goals (DO NOT DUPLICATE THESE):
+        ${currentGoalsSummary}
+
+        Analysis Instructions:
+        1. Identify pillars with a large gap between Score and Target that lack active goals. Prioritize these.
+        2. If a user has 'Achieved' goals in the list, suggest a logical "Level Up" goal.
+        3. Ensure goals are Specific, Measurable, Achievable, Relevant, and Time-bound.
+        4. Assign each goal to one of these pillars: 'Health', 'Wealth', 'Relationships', 'General'.
+        5. Status should always be 'Upcoming'.
     `;
 
     try {

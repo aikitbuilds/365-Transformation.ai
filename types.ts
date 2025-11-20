@@ -23,6 +23,8 @@ export interface Task {
   priority: 'Low' | 'Medium' | 'High';
   tags: string[];
   dueDate?: string;
+  estimatedHours?: number;
+  actualHours?: number;
   subtasks?: Subtask[];
   comments?: Comment[];
 }
@@ -83,11 +85,17 @@ export interface UserProfile {
 }
 
 // New Types for Goals/Milestones
+export interface MetricEntry {
+    date: string; // YYYY-MM-DD
+    value: number;
+}
+
 export interface KeyMetric {
     name: string;
     progress: number;
     target: number;
     unit: string;
+    history?: MetricEntry[];
 }
 
 export type GoalStatus = 'On Track' | 'At Risk' | 'Achieved' | 'Upcoming';

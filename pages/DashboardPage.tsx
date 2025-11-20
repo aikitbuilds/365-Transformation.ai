@@ -28,8 +28,32 @@ const initialMockGoals: Goal[] = [
         status: 'On Track',
         pillar: 'Wealth',
         keyMetrics: [
-            { name: 'Revenue', progress: 500, target: 5000, unit: '$' },
-            { name: 'Leads', progress: 15, target: 50, unit: '' },
+            { 
+                name: 'Revenue', 
+                progress: 500, 
+                target: 5000, 
+                unit: '$',
+                history: [
+                    { date: '2024-01-01', value: 0 },
+                    { date: '2024-01-15', value: 100 },
+                    { date: '2024-02-01', value: 250 },
+                    { date: '2024-02-15', value: 350 },
+                    { date: '2024-03-01', value: 500 },
+                ]
+            },
+            { 
+                name: 'Leads', 
+                progress: 15, 
+                target: 50, 
+                unit: '',
+                history: [
+                    { date: '2024-01-01', value: 0 },
+                    { date: '2024-01-20', value: 5 },
+                    { date: '2024-02-10', value: 8 },
+                    { date: '2024-02-25', value: 12 },
+                    { date: '2024-03-05', value: 15 },
+                ]
+            },
         ]
     },
     {
@@ -40,8 +64,30 @@ const initialMockGoals: Goal[] = [
         status: 'At Risk',
         pillar: 'Health',
         keyMetrics: [
-            { name: 'Longest Run', progress: 4, target: 10, unit: 'km' },
-            { name: 'Weekly Runs', progress: 2, target: 4, unit: 'sessions' },
+            { 
+                name: 'Longest Run', 
+                progress: 4, 
+                target: 10, 
+                unit: 'km',
+                history: [
+                    { date: '2024-02-01', value: 2 },
+                    { date: '2024-02-08', value: 2.5 },
+                    { date: '2024-02-15', value: 3 },
+                    { date: '2024-02-22', value: 4 }, // Stagnant
+                    { date: '2024-03-01', value: 4 },
+                ]
+            },
+            { 
+                name: 'Weekly Runs', 
+                progress: 2, 
+                target: 4, 
+                unit: 'sessions',
+                history: [
+                     { date: '2024-02-01', value: 1 },
+                     { date: '2024-02-15', value: 3 },
+                     { date: '2024-03-01', value: 2 },
+                ]
+            },
         ]
     },
     {
@@ -52,7 +98,18 @@ const initialMockGoals: Goal[] = [
         status: 'Achieved',
         pillar: 'Relationships',
         keyMetrics: [
-            { name: 'Contacts Met', progress: 5, target: 5, unit: '' },
+            { 
+                name: 'Contacts Met', 
+                progress: 5, 
+                target: 5, 
+                unit: '',
+                history: [
+                    { date: '2024-01-10', value: 1 },
+                    { date: '2024-01-25', value: 2 },
+                    { date: '2024-02-05', value: 4 },
+                    { date: '2024-02-15', value: 5 },
+                ]
+            },
         ]
     },
 ];

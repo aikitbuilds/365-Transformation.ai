@@ -9,9 +9,10 @@ import { ZapIcon, XIcon, CheckCircleIcon, TargetIcon } from './icons/IconCompone
 interface AiGoalGeneratorModalProps {
     onClose: () => void;
     onAddGoals: (goals: Goal[]) => void;
+    currentGoals: Goal[];
 }
 
-export const AiGoalGeneratorModal: React.FC<AiGoalGeneratorModalProps> = ({ onClose, onAddGoals }) => {
+export const AiGoalGeneratorModal: React.FC<AiGoalGeneratorModalProps> = ({ onClose, onAddGoals, currentGoals }) => {
     const profileCtx = useContext(ProfileContext);
     const [isGenerating, setIsGenerating] = useState(false);
     const [generatedGoals, setGeneratedGoals] = useState<Goal[]>([]);
@@ -21,7 +22,7 @@ export const AiGoalGeneratorModal: React.FC<AiGoalGeneratorModalProps> = ({ onCl
         if (!profileCtx?.profile) return;
         
         setIsGenerating(true);
-        const goals = await generateSmartGoals(profileCtx.profile);
+        const goals = await generateSmartGoals(profileCtx.profile, currentGoals);
         setGeneratedGoals(goals);
         // Auto-select all by default
         setSelectedGoalIds(new Set(goals.map(g => g.id)));
@@ -55,7 +56,7 @@ export const AiGoalGeneratorModal: React.FC<AiGoalGeneratorModalProps> = ({ onCl
                                 AI Goal Coach
                             </CardTitle>
                             <CardDescription>
-                                Generate SMART goals based on your profile: "{profileCtx?.profile?.mainGoal.substring(0, 40)}..."
+                                Analyzing {currentGoals.length} active goals and your profile to suggest next steps.
                             </CardDescription>
                         </div>
                         <button onClick={onClose} className="text-slate-400 hover:text-white">
@@ -66,12 +67,12 @@ export const AiGoalGeneratorModal: React.FC<AiGoalGeneratorModalProps> = ({ onCl
                         {generatedGoals.length === 0 && !isGenerating && (
                             <div className="text-center py-8">
                                 <TargetIcon className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-                                <p className="text-slate-400 mb-6">Ready to define your next milestones?</p>
+                                <p className="text-slate-400 mb-6">Ready to find your next breakthrough?</p>
                                 <button 
                                     onClick={handleGenerate}
                                     className="px-6 py-3 bg-violet-600 hover:bg-violet-700 text-white font-bold rounded-lg transition-all shadow-[0_0_20px_rgba(139,92,246,0.3)]"
                                 >
-                                    Generate Goals with AI
+                                    Generate Suggested Goals
                                 </button>
                             </div>
                         )}
@@ -79,13 +80,13 @@ export const AiGoalGeneratorModal: React.FC<AiGoalGeneratorModalProps> = ({ onCl
                         {isGenerating && (
                             <div className="text-center py-12 space-y-4">
                                 <div className="w-12 h-12 border-4 border-violet-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                                <p className="text-violet-300 animate-pulse">Analyzing your life pillars and crafting goals...</p>
+                                <p className="text-violet-300 animate-pulse">Analyzing pillar gaps and progress trends...</p>
                             </div>
                         )}
 
                         {generatedGoals.length > 0 && (
                             <div className="space-y-4">
-                                <p className="text-sm text-slate-400">Select the goals you want to add to your tracker:</p>
+                                <p className="text-sm text-slate-400">Based on your progress, we suggest these next steps:</p>
                                 <div className="space-y-3">
                                     {generatedGoals.map(goal => (
                                         <div 
