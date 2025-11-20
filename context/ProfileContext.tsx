@@ -23,6 +23,18 @@ export const ProfileProvider: React.FC<{ children: ReactNode }> = ({ children })
         const fetchProfile = async () => {
             if (authContext?.user) {
                 setIsLoading(true);
+                
+                // Handle Demo User
+                if (authContext.isDemo) {
+                    // Check if we have a temporary profile in memory or just start fresh
+                    if (!profile) {
+                        setProfile(null);
+                        setOnboardingComplete(false);
+                    }
+                    setIsLoading(false);
+                    return;
+                }
+
                 try {
                     const profileDocRef = doc(db, 'users', authContext.user.uid);
                     const docSnap = await getDoc(profileDocRef);
@@ -52,13 +64,21 @@ export const ProfileProvider: React.FC<{ children: ReactNode }> = ({ children })
         };
 
         fetchProfile();
-    }, [authContext?.user, authContext?.loading]);
+    }, [authContext?.user, authContext?.loading, authContext?.isDemo]);
 
     const saveProfile = async (newProfile: UserProfile) => {
         if (!authContext?.user) {
             console.error("Cannot save profile, no user logged in");
             return;
         }
+
+        // Handle Demo User
+        if (authContext.isDemo) {
+            setProfile(newProfile);
+            setOnboardingComplete(true);
+            return;
+        }
+
         try {
             const profileDocRef = doc(db, 'users', authContext.user.uid);
             await setDoc(profileDocRef, newProfile, { merge: true });

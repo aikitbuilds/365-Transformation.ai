@@ -2,15 +2,14 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// TODO: Replace with your app's Firebase project configuration
-// You can get this from the Firebase Console: Project Settings > General > Your apps > Firebase SDK snippet > Config
+// Tries to load from standard environment variables if available
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY || "YOUR_API_KEY",
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN || "YOUR_AUTH_DOMAIN",
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID || "YOUR_PROJECT_ID",
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET || "YOUR_STORAGE_BUCKET",
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID || "YOUR_MESSAGING_SENDER_ID",
+  appId: process.env.REACT_APP_FIREBASE_APP_ID || "YOUR_APP_ID"
 };
 
 // Initialize Firebase

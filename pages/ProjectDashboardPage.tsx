@@ -21,12 +21,23 @@ const ProjectDashboardPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const getProjectDocRef = () => {
-    if (!authCtx?.user) return null;
+    if (!authCtx?.user || authCtx.isDemo) return null;
     return doc(db, 'users', authCtx.user.uid, 'projects', 'default');
   }
 
   useEffect(() => {
     const fetchProjectData = async () => {
+      // Handle Demo Mode
+      if (authCtx?.isDemo) {
+          const initialData = getInitialProjectData();
+          setColumns(initialData.columns);
+          setRoadmap(initialData.roadmap);
+          setFiles(initialData.files);
+          setActiveFile(initialData.files[0]);
+          setIsLoading(false);
+          return;
+      }
+
       const projectDocRef = getProjectDocRef();
       if (!projectDocRef) return;
 
@@ -50,6 +61,12 @@ const ProjectDashboardPage: React.FC = () => {
         }
       } catch (error) {
           console.error("Error fetching project data: ", error);
+          // Fallback to initial data on error to keep UI usable
+          const initialData = getInitialProjectData();
+          setColumns(initialData.columns);
+          setRoadmap(initialData.roadmap);
+          setFiles(initialData.files);
+          setActiveFile(initialData.files[0]);
       } finally {
           setIsLoading(false);
       }
@@ -58,9 +75,11 @@ const ProjectDashboardPage: React.FC = () => {
     if (authCtx?.user) {
       fetchProjectData();
     }
-  }, [authCtx?.user]);
+  }, [authCtx?.user, authCtx?.isDemo]);
 
   const updateColumnsInFirestore = async (newColumns: KanbanColumn[]) => {
+      if (authCtx?.isDemo) return; // Skip Firestore update in demo mode
+
       const projectDocRef = getProjectDocRef();
       if (!projectDocRef) return;
       try {
