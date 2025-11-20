@@ -1,50 +1,51 @@
 import React from 'react';
 
-interface CardProps {
+// Base interface for all Card components
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
-  className?: string;
 }
 
-export const Card: React.FC<CardProps> = ({ children, className }) => {
-  return (
-    <div className={`bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl shadow-lg p-6 ${className}`}>
-      {children}
-    </div>
-  );
-};
+// Main Card component with glassmorphism effect
+export const Card: React.FC<CardProps> = ({ children, className, ...props }) => (
+  <div
+    className={`bg-slate-800/50 backdrop-blur-lg border border-slate-700/50 rounded-xl shadow-lg ${className}`}
+    {...props}
+  >
+    {children}
+  </div>
+);
 
-interface CardHeaderProps {
-    children: React.ReactNode;
-    className?: string;
-}
+// CardHeader component for titles and descriptions
+export const CardHeader: React.FC<CardProps> = ({ children, className, ...props }) => (
+  <div className={`p-6 border-b border-slate-700/50 ${className}`} {...props}>
+    {children}
+  </div>
+);
 
-export const CardHeader: React.FC<CardHeaderProps> = ({ children, className }) => {
-    return <div className={`mb-4 ${className}`}>{children}</div>
-}
+// CardTitle component for the main heading within the header
+export const CardTitle: React.FC<CardProps> = ({ children, className, ...props }) => (
+  <h3 className={`text-lg font-semibold text-slate-100 ${className}`} {...props}>
+    {children}
+  </h3>
+);
 
-interface CardTitleProps {
-    children: React.ReactNode;
-    className?: string;
-}
+// CardDescription component for supplementary text in the header
+export const CardDescription: React.FC<CardProps> = ({ children, className, ...props }) => (
+  <p className={`text-sm text-slate-400 mt-1 ${className}`} {...props}>
+    {children}
+  </p>
+);
 
-export const CardTitle: React.FC<CardTitleProps> = ({ children, className }) => {
-    return <h3 className={`text-xl font-bold text-slate-100 ${className}`}>{children}</h3>
-}
+// CardContent component for the main body of the card
+export const CardContent: React.FC<CardProps> = ({ children, className, ...props }) => (
+  <div className={`p-6 ${className}`} {...props}>
+    {children}
+  </div>
+);
 
-interface CardDescriptionProps {
-    children: React.ReactNode;
-    className?: string;
-}
-
-export const CardDescription: React.FC<CardDescriptionProps> = ({ children, className }) => {
-    return <p className={`text-sm text-slate-400 ${className}`}>{children}</p>
-}
-
-interface CardContentProps {
-    children: React.ReactNode;
-    className?: string;
-}
-
-export const CardContent: React.FC<CardContentProps> = ({ children, className }) => {
-    return <div className={className}>{children}</div>
-}
+// CardFooter component for actions or closing remarks
+export const CardFooter: React.FC<CardProps> = ({ children, className, ...props }) => (
+  <div className={`p-6 border-t border-slate-700/50 ${className}`} {...props}>
+    {children}
+  </div>
+);

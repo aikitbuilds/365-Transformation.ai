@@ -2,32 +2,98 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AI Life OS</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Project OS Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            keyframes: {
+               aurora: {
+                 'from': { backgroundPosition: '0% 50%' },
+                 'to': { backgroundPosition: '100% 50%' },
+               },
+            },
+            animation: {
+              aurora: 'aurora 20s ease infinite alternate',
+            },
+          },
+        },
+      }
+    </script>
     <style>
       body {
-        font-family: 'Inter', sans-serif;
+        background-color: #020617; /* slate-950 */
+        color: #e2e8f0; /* slate-200 */
+      }
+      .aurora-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: -1;
+        overflow: hidden;
+      }
+      .aurora-bg {
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        top: -50%;
+        left: -50%;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 50%, rgba(2, 6, 23, 0) 100%);
+        animation: aurora 20s ease infinite alternate;
+      }
+      .mermaid {
+        background-color: #0f172a;
+        padding: 1rem;
+        border-radius: 0.5rem;
+      }
+      .mermaid text, .mermaid .label {
+        color: #e2e8f0 !important;
       }
     </style>
   <script type="importmap">
 {
   "imports": {
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.28.0",
     "recharts": "https://aistudiocdn.com/recharts@^3.3.0",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.28.0"
+    "firebase/app": "https://aistudiocdn.com/firebase@^10.12.3/app",
+    "firebase/auth": "https://aistudiocdn.com/firebase@^10.12.3/auth",
+    "firebase/firestore": "https://aistudiocdn.com/firebase@^10.12.3/firestore",
+    "firebase/": "https://aistudiocdn.com/firebase@^10.12.3/"
   }
 }
 </script>
 </head>
-  <body class="bg-slate-900">
+  <body>
+    <div class="aurora-container">
+        <div class="aurora-bg"></div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+      mermaid.initialize({ startOnLoad: false, theme: 'base', themeVariables: {
+        'primaryColor': '#1e293b',
+        'primaryTextColor': '#e2e8f0',
+        'primaryBorderColor': '#3b82f6',
+        'lineColor': '#64748b',
+        'textColor': '#e2e8f0',
+        'mainBkg': '#0f172a',
+        'errorBkgColor': '#f87171',
+        'errorTextColor': '#1e293b'
+      }});
+    </script>
   </body>
 </html>

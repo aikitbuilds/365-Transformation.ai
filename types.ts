@@ -1,58 +1,104 @@
-export interface PillarProgress {
-  week_number: number;
-  health_score: number;
-  wealth_score: number;
-  relationships_score: number;
-}
+import React from 'react';
 
-export interface IncomeData {
-  month: string;
-  sideBusiness: number;
-  solarCareer: number;
-  gigWork: number;
-}
+export type TaskStatus = 'Backlog' | 'To Do' | 'In Progress' | 'Done';
 
-export interface Ritual {
+export interface Subtask {
   id: string;
-  name: string;
-  time: string;
+  text: string;
   completed: boolean;
-  category: 'morning' | 'evening';
 }
 
-export interface Streak {
+export interface Comment {
   id: string;
+  author: string;
+  text: string;
+  createdAt: string; // ISO string
+}
+
+export interface Task {
+  id: string;
+  title: string;
+  description: string;
+  status: TaskStatus;
+  priority: 'Low' | 'Medium' | 'High';
+  tags: string[];
+  dueDate?: string;
+  subtasks?: Subtask[];
+  comments?: Comment[];
+}
+
+export interface KanbanColumn {
+  id: TaskStatus;
+  title: string;
+  tasks: Task[];
+}
+
+export interface RoadmapPhase {
   name: string;
-  count: number;
+  weeks: string;
+  description: string;
+  status: 'Completed' | 'In Progress' | 'Upcoming';
+}
+
+export interface ProjectFile {
+    name: string;
+    type: 'markdown' | 'mermaid';
+    content: string;
+}
+
+// Types for the Transformation OS Dashboard
+export interface Pillar {
+    name: string;
+    score: number;
+    target: number;
+    color: string;
 }
 
 export interface LifeAssessment {
-  physical_health: number;
-  mental_health: number;
-  spiritual_health: number;
-  financial_security: number;
-  wealth_building: number;
-  financial_mindset: number;
-  personal_relationships: number;
-  professional_relationships: number;
-  social_impact: number;
+    category: string;
+    score: number;
 }
 
-export interface GogginsChallenge {
-  week: number;
-  description: string;
-  completed: boolean;
+export interface Streak {
+    name: string;
+    icon: React.ComponentType<{className?: string}>;
+    days: number;
 }
 
-export interface Cookie {
-  id: string;
-  description: string;
-  date: string;
+export interface IncomeData {
+    month: string;
+    sideBusiness: number;
+    solarCareer: number;
+    gigWork: number;
 }
 
-export interface ScheduleEvent {
-  day: string;
-  time: string;
-  title: string;
-  category: 'Health' | 'Wealth' | 'Relationships' | 'Solar Career';
+export interface UserProfile {
+    name: string;
+    mainGoal: string;
+    pillars: Pillar[];
+    aiStartingPlan: {
+        title: string;
+        steps: string[];
+    };
+}
+
+// New Types for Goals/Milestones
+export interface KeyMetric {
+    name: string;
+    progress: number;
+    target: number;
+    unit: string;
+}
+
+export type GoalStatus = 'On Track' | 'At Risk' | 'Achieved' | 'Upcoming';
+export type GoalPillar = 'Health' | 'Wealth' | 'Relationships' | 'General';
+
+export interface Goal {
+    id: string;
+    title: string;
+    description: string;
+    targetDate: string;
+    status: GoalStatus;
+    pillar: GoalPillar;
+    keyMetrics: KeyMetric[];
 }
